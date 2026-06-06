@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>인연은 이렇게 이어집니다</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif;
+    background: #f0ede8; min-height: 100vh; padding: 2.5rem 1rem 5rem;
+  }
+  .form-wrap { max-width: 520px; margin: 0 auto; }
+  .outer-frame {
+    border: 1.5px solid #c8bfb0; border-radius: 20px; padding: 2px;
+    background: linear-gradient(145deg, #e8e0d4, #f5f0ea);
+    box-shadow: 0 8px 32px rgba(0,0,0,0.08), 0 2px 8px rgba(0,0,0,0.04);
+  }
+  .inner-frame { border: 1px solid #ddd5c8; border-radius: 18px; background: #fdfaf7; overflow: hidden; }
+  .header-deco {
+    background: #fff; border-bottom: 1px solid #ede5da;
+    padding: 2rem 2rem 1.75rem; text-align: center; position: relative;
+  }
+  .header-deco::before {
+    content: ''; position: absolute; bottom: -1px; left: 50%; transform: translateX(-50%);
+    width: 60px; height: 2px; background: #b5a08a;
+  }
+  .corner-deco { position: absolute; width: 18px; height: 18px; border-color: #b5a08a; border-style: solid; opacity: 0.6; }
+  .corner-deco.tl { top: 12px; left: 14px; border-width: 1.5px 0 0 1.5px; border-radius: 3px 0 0 0; }
+  .corner-deco.tr { top: 12px; right: 14px; border-width: 1.5px 1.5px 0 0; border-radius: 0 3px 0 0; }
+  .profile-img {
+    width: 90px; height: 90px; border-radius: 50%; object-fit: cover; object-position: top;
+    border: 3px solid #fff; outline: 1.5px solid #d4c9ba;
+    margin: 0 auto 1rem; display: block; box-shadow: 0 4px 14px rgba(0,0,0,0.10);
+  }
+  .header-deco h1 { font-size: 19px; font-weight: 700; color: #2a2218; margin-bottom: 7px; }
+  .header-deco p { font-size: 13.5px; color: #7a6e63; line-height: 1.75; }
+  .form-body { padding: 1.5rem 1.75rem 1.75rem; }
+  .card {
+    background: #fff; border: 1px solid #e4dbd0; border-radius: 12px;
+    padding: 1.25rem 1.35rem; margin-bottom: 1rem; position: relative;
+  }
+  .card::before {
+    content: ''; position: absolute; top: 0; left: 1.35rem;
+    width: 32px; height: 2px; background: #b5a08a; border-radius: 0 0 2px 2px;
+  }
+  .section-title { font-size: 10.5px; font-weight: 700; color: #a0927f; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 1rem; }
+  .field { margin-bottom: 1rem; }
+  .field:last-child { margin-bottom: 0; }
+  .field label { display: block; font-size: 13px; font-weight: 600; color: #4a3f35; margin-bottom: 5px; }
+  .field input, .field textarea {
+    width: 100%; padding: 9px 12px; font-size: 13.5px; font-family: inherit;
+    border: 1px solid #ddd5c8; border-radius: 8px;
+    background: #faf8f5; color: #2a2218; outline: none;
+    transition: border-color 0.15s, background 0.15s;
+  }
+  .field input:focus, .field textarea:focus { border-color: #a0927f; background: #fff; }
+  .field textarea { resize: vertical; min-height: 78px; line-height: 1.65; }
+  .row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .grade-chips { display: flex; gap: 7px; flex-wrap: wrap; }
+  .grade-chip {
+    padding: 6px 13px; border: 1px solid #ddd5c8; border-radius: 999px;
+    font-size: 12.5px; color: #5a5048; background: #faf8f5; cursor: pointer;
+    user-select: none; transition: all 0.15s; font-family: inherit;
+  }
+  .grade-chip:hover { border-color: #a0927f; background: #f3ede5; }
+  .grade-chip.selected { border-color: #8a6f55; background: #f0e6d8; color: #5c3d1e; font-weight: 600; }
+
+  /* SNS 탭 */
+  .sns-tabs { display: flex; gap: 6px; margin-bottom: 10px; }
+  .sns-tab {
+    flex: 1; display: flex; align-items: center; justify-content: center; gap: 5px;
+    padding: 7px 8px; border: 1px solid #ddd5c8; border-radius: 8px;
+    font-size: 12px; color: #7a6e63; background: #faf8f5;
+    cursor: pointer; user-select: none; transition: all 0.15s; font-family: inherit;
+  }
+  .sns-tab:hover { border-color: #a0927f; background: #f3ede5; }
+  .sns-tab.active-insta { border-color: #c13584; background: #fdf0f7; color: #8a1a5c; font-weight: 600; }
+  .sns-tab.active-blog  { border-color: #03c75a; background: #edfbf3; color: #027a38; font-weight: 600; }
+  .sns-tab.active-fb    { border-color: #1877f2; background: #eef4fe; color: #0d5dbf; font-weight: 600; }
+  .sns-tab svg { width: 14px; height: 14px; flex-shrink: 0; }
+
+  /* SNS 입력창 */
+  .sns-input-wrap {
+    display: none; align-items: center;
+    border: 1px solid #ddd5c8; border-radius: 8px;
+    background: #faf8f5; overflow: hidden;
+    transition: border-color 0.15s;
+  }
+  .sns-input-wrap.show { display: flex; }
+  .sns-input-wrap:focus-within { border-color: #a0927f; background: #fff; }
+  .sns-prefix {
+    display: flex; align-items: center; gap: 5px;
+    padding: 9px 10px 9px 12px; font-size: 13px; font-weight: 600;
+    background: #f3ede5; border-right: 1px solid #ddd5c8;
+    white-space: nowrap; flex-shrink: 0; color: #8a6f55;
+  }
+  .sns-prefix svg { width: 14px; height: 14px; }
+  .sns-input-wrap input {
+    border: none; border-radius: 0; background: transparent;
+    padding: 9px 12px; flex: 1; width: 0; font-size: 13.5px; font-family: inherit; outline: none; color: #2a2218;
+  }
+  .sns-hint { font-size: 11.5px; color: #b0a899; margin-top: 5px; display: none; }
+  .sns-hint.show { display: block; }
+
+  .quote-box {
+    text-align: center; padding: 1.5rem 1.25rem 1.25rem; margin-bottom: 1rem;
+    background: #fff; border: 1px solid #e4dbd0; border-radius: 12px; position: relative;
+  }
+  .quote-box::before, .quote-box::after {
+    content: ''; position: absolute; left: 50%; transform: translateX(-50%);
+    width: 40px; height: 1px; background: #c8bfb0;
+  }
+  .quote-box::before { top: 0; } .quote-box::after { bottom: 0; }
+  .quote-mark { font-size: 28px; color: #c8bfb0; line-height: 1; margin-bottom: 6px; font-family: Georgia, serif; }
+  .quote-main { font-size: 14.5px; font-weight: 700; color: #2a2218; line-height: 1.8; margin-bottom: 8px; }
+  .quote-author { font-size: 11.5px; color: #a0927f; letter-spacing: 0.06em; margin-bottom: 10px; }
+  .quote-divider { width: 28px; height: 1px; background: #ddd5c8; margin: 0 auto 10px; }
+  .quote-sub { font-size: 13px; color: #7a6e63; line-height: 1.65; }
+  .submit-btn {
+    width: 100%; padding: 13px; font-size: 15px; font-weight: 700;
+    background: #3a2e24; color: #f5f0ea; border: none; border-radius: 10px;
+    cursor: pointer; transition: opacity 0.15s, transform 0.1s;
+    font-family: inherit; letter-spacing: 0.03em;
+  }
+  .submit-btn:hover { opacity: 0.85; } .submit-btn:active { transform: scale(0.99); }
+  .required { color: #c0614a; margin-left: 2px; }
+  .char-count { font-size: 11.5px; color: #b0a899; text-align: right; margin-top: 4px; }
+  .err-msg { font-size: 13px; color: #c0614a; text-align: center; margin-bottom: 10px; display: none; }
+  .success-wrap { text-align: center; padding: 3.5rem 1rem; display: none; }
+  .success-wrap .icon { font-size: 3rem; margin-bottom: 1rem; }
+  .success-wrap h2 { font-size: 20px; font-weight: 700; color: #2a2218; margin-bottom: 8px; }
+  .success-wrap p { font-size: 14px; color: #7a6e63; line-height: 1.75; }
+  @media (max-width: 400px) { .row2 { grid-template-columns: 1fr; } .form-body { padding: 1.25rem 1.25rem 1.5rem; } }
+</style>
+</head>
+<body>
+<div class="form-wrap">
+  <div class="outer-frame">
+    <div class="inner-frame">
+      <div class="header-deco">
+        <div class="corner-deco tl"></div>
+        <div class="corner-deco tr"></div>
+        <img class="profile-img" src="data:image/jpeg;base64,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" alt="양내윤 교수 프로필 사진" />
+        <h1>인연은 이렇게 이어집니다</h1>
+        <p>강의실을 떠나도 연결은 계속됩니다.<br>간단히 남겨주시면 소식 나눌게요.</p>
+      </div>
+
+      <div class="form-body">
+        <div id="form-area">
+          <div class="card">
+            <p class="section-title">기본 정보</p>
+            <div class="field">
+              <label>이름 <span class="required">*</span></label>
+              <input type="text" id="name" placeholder="홍길동" />
+            </div>
+            <div class="row2">
+              <div class="field">
+                <label>학교</label>
+                <input type="text" id="school" placeholder="○○대학교" />
+              </div>
+              <div class="field">
+                <label>학과</label>
+                <input type="text" id="dept" placeholder="경영학과" />
+              </div>
+            </div>
+            <div class="field">
+              <label>학년 / 수료·졸업 <span class="required">*</span></label>
+              <div class="grade-chips" id="grade-chips">
+                <span class="grade-chip" onclick="selectGrade(this)">1학년</span>
+                <span class="grade-chip" onclick="selectGrade(this)">2학년</span>
+                <span class="grade-chip" onclick="selectGrade(this)">3학년</span>
+                <span class="grade-chip" onclick="selectGrade(this)">4학년</span>
+                <span class="grade-chip" onclick="selectGrade(this)">수료</span>
+                <span class="grade-chip" onclick="selectGrade(this)">졸업</span>
+              </div>
+            </div>
+            <div class="field">
+              <label>이메일 <span class="required">*</span></label>
+              <input type="email" id="email" placeholder="example@email.com" />
+            </div>
+            <div class="field">
+              <label>전화번호</label>
+              <input type="tel" id="phone" placeholder="010-0000-0000" />
+            </div>
+
+            <!-- SNS 선택 -->
+            <div class="field" style="margin-bottom:0">
+              <label>SNS <span style="font-weight:400;color:#b0a899">(해당하는 것 선택 후 입력)</span></label>
+              <div class="sns-tabs">
+                <!-- 인스타그램 -->
+                <button type="button" class="sns-tab" id="tab-insta" onclick="toggleSns('insta')">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/>
+                    <circle cx="17.5" cy="6.5" r="0.8" fill="currentColor" stroke="none"/>
+                  </svg>
+                  인스타그램
+                </button>
+                <!-- 블로그 -->
+                <button type="button" class="sns-tab" id="tab-blog" onclick="toggleSns('blog')">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z"/>
+                    <path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10A15.3 15.3 0 0 1 8 12a15.3 15.3 0 0 1 4-10z"/>
+                  </svg>
+                  블로그
+                </button>
+                <!-- 페이스북 -->
+                <button type="button" class="sns-tab" id="tab-fb" onclick="toggleSns('fb')">
+                  <svg viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/>
+                  </svg>
+                  페이스북
+                </button>
+              </div>
+
+              <!-- 인스타그램 입력 -->
+              <div class="sns-input-wrap" id="input-insta">
+                <div class="sns-prefix">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/>
+                    <circle cx="17.5" cy="6.5" r="0.8" fill="currentColor" stroke="none"/>
+                  </svg>
+                  @
+                </div>
+                <input type="text" id="sns-insta" placeholder="아이디 입력" autocapitalize="none" />
+              </div>
+              <p class="sns-hint" id="hint-insta">@ 없이 아이디만 입력하세요</p>
+
+              <!-- 블로그 입력 -->
+              <div class="sns-input-wrap" id="input-blog">
+                <div class="sns-prefix">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z"/>
+                    <path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10A15.3 15.3 0 0 1 8 12a15.3 15.3 0 0 1 4-10z"/>
+                  </svg>
+                  blog.naver.com/
+                </div>
+                <input type="url" id="sns-blog" placeholder="아이디 입력" />
+              </div>
+              <p class="sns-hint" id="hint-blog">blog.naver.com/ 뒤 아이디만 입력하세요</p>
+
+              <!-- 페이스북 입력 -->
+              <div class="sns-input-wrap" id="input-fb">
+                <div class="sns-prefix">
+                  <svg viewBox="0 0 24 24" fill="currentColor" style="color:#1877f2">
+                    <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/>
+                  </svg>
+                  facebook.com/
+                </div>
+                <input type="text" id="sns-fb" placeholder="아이디 입력" autocapitalize="none" />
+              </div>
+              <p class="sns-hint" id="hint-fb">facebook.com/ 뒤 아이디만 입력하세요</p>
+            </div>
+          </div>
+
+          <div class="card">
+            <p class="section-title">한 마디</p>
+            <div class="field" style="margin:0">
+              <label>교수님께 남기는 메시지 <span style="font-weight:400;color:#b0a899">(선택)</span></label>
+              <textarea id="message" placeholder="강의에서 기억에 남는 것, 앞으로의 계획, 무엇이든 좋아요." maxlength="200" oninput="updateChar()"></textarea>
+              <div class="char-count"><span id="char-num">0</span> / 200</div>
+            </div>
+          </div>
+
+          <div class="quote-box">
+            <div class="quote-mark">"</div>
+            <p class="quote-main">산적이 되지 말고 해적이 되자!<br><span style="color:#c0614a">해</span>결할까? <span style="color:#c0614a">적</span>응할까?</p>
+            <p class="quote-author">— 양내윤 교수 —</p>
+            <p style="text-align:center;margin-top:4px;margin-bottom:10px;"><a href="https://instagram.com/yangnaeyun" target="_blank" style="font-size:11px;color:#c13584;text-decoration:none;letter-spacing:0.03em;">@yangnaeyun</a></p>
+            <div class="quote-divider"></div>
+            <p class="quote-sub">끌림당 당원 여러분의 기적을 응원합니다!</p>
+          </div>
+
+          <p class="err-msg" id="err-msg"></p>
+          <button class="submit-btn" onclick="handleSubmit()">제출하기 →</button>
+        </div>
+
+        <div class="success-wrap" id="success-area">
+          <div class="icon">🤝</div>
+          <h2>감사합니다!</h2>
+          <p>정보가 잘 저장되었어요.<br>앞으로도 좋은 인연 이어가요.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  var GAS_URL = 'https://script.google.com/macros/s/AKfycbxbv1o6D00nJkhBFEun-PoW30ZPDaZ40RRaWpZd4QY6HUvzxrw7B0JRwODT1GDs3d7LmA/exec';
+  var selectedGrade = '';
+  var activeSns = { insta: false, blog: false, fb: false };
+
+  function toggleSns(type) {
+    activeSns[type] = !activeSns[type];
+    var activeClass = { insta: 'active-insta', blog: 'active-blog', fb: 'active-fb' };
+    var tab = document.getElementById('tab-' + type);
+    var input = document.getElementById('input-' + type);
+    var hint = document.getElementById('hint-' + type);
+    if (activeSns[type]) {
+      tab.classList.add(activeClass[type]);
+      input.classList.add('show');
+      hint.classList.add('show');
+      document.getElementById('sns-' + type).focus();
+    } else {
+      tab.classList.remove(activeClass[type]);
+      input.classList.remove('show');
+      hint.classList.remove('show');
+      document.getElementById('sns-' + type).value = '';
+    }
+  }
+
+  function selectGrade(el) {
+    document.querySelectorAll('#grade-chips .grade-chip').forEach(function(c){ c.classList.remove('selected'); });
+    el.classList.add('selected');
+    selectedGrade = el.textContent;
+  }
+  function updateChar() {
+    document.getElementById('char-num').textContent = document.getElementById('message').value.length;
+  }
+  function handleSubmit() {
+    var name = document.getElementById('name').value.trim();
+    var email = document.getElementById('email').value.trim();
+    var errEl = document.getElementById('err-msg');
+    if (!name) { errEl.textContent = '이름을 입력해 주세요.'; errEl.style.display='block'; return; }
+    if (!selectedGrade) { errEl.textContent = '학년/수료·졸업을 선택해 주세요.'; errEl.style.display='block'; return; }
+    if (!email || email.indexOf('@') < 0) { errEl.textContent = '올바른 이메일을 입력해 주세요.'; errEl.style.display='block'; return; }
+    errEl.style.display = 'none';
+
+    var insta = document.getElementById('sns-insta').value.trim().replace(/^@/, '');
+    var blog = document.getElementById('sns-blog').value.trim();
+    var fb = document.getElementById('sns-fb').value.trim();
+
+    var payload = {
+      timestamp: new Date().toLocaleString('ko-KR'),
+      name: name,
+      school: document.getElementById('school').value.trim(),
+      dept: document.getElementById('dept').value.trim(),
+      grade: selectedGrade,
+      email: email,
+      phone: document.getElementById('phone').value.trim(),
+      instagram: insta ? '@' + insta : '',
+      blog: blog,
+      facebook: fb,
+      message: document.getElementById('message').value.trim()
+    };
+
+    var btn = document.querySelector('.submit-btn');
+    btn.textContent = '저장 중...';
+    btn.disabled = true;
+
+    fetch(GAS_URL, {
+      method: 'POST', mode: 'no-cors',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    }).then(function(){
+      document.getElementById('form-area').style.display = 'none';
+      document.getElementById('success-area').style.display = 'block';
+    }).catch(function(){
+      document.getElementById('form-area').style.display = 'none';
+      document.getElementById('success-area').style.display = 'block';
+    });
+  }
+</script>
+</body>
+</html>
